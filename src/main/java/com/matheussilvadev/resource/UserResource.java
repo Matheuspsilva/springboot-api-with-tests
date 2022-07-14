@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,6 +53,16 @@ public class UserResource {
 		//Retorna URI de acesso ao novo objeto
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newObj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
+		
+	}
+	
+	@PutMapping(value = "/{id}")
+	public ResponseEntity<UserDTO> update(@PathVariable Integer id, @RequestBody UserDTO userDTO){
+		//Garantir que o usuário tem o id recebido na url
+		userDTO.setId(id);
+		User newUser = service.update(userDTO);
+		
+		return ResponseEntity.ok().body(mapper.map(newUser, UserDTO.class));
 		
 	}
 
