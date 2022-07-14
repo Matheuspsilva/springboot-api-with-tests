@@ -11,6 +11,7 @@ import com.matheussilvadev.domain.User;
 import com.matheussilvadev.repositories.UserRepository;
 import com.matheussilvadev.resource.dto.UserDTO;
 import com.matheussilvadev.services.UserService;
+import com.matheussilvadev.services.exceptions.DataIntegrityViolationException;
 import com.matheussilvadev.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -35,8 +36,16 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public User create(UserDTO userDTO) {
+		findByEmail(userDTO);
 		return userRepository.save(modelMapper.map(userDTO, User.class));
 
+	}
+	
+	private void findByEmail(UserDTO obj) {
+		Optional<User> user = userRepository.findByEmail(obj.getEmail());
+		if(user.isPresent()) {
+			throw new DataIntegrityViolationException("E-mail já cadastrado no sistema");
+		}
 	}
 
 }
