@@ -2,6 +2,8 @@ package com.matheussilvadev.services.impl;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -24,9 +26,11 @@ import net.bytebuddy.agent.VirtualMachine.ForHotSpot.Connection.Response;
 @SpringBootTest
 class UserServiceImplTest {
 	
+	private static final int FIRST_INDEX = 0;
+
 	private static final Integer ID = 1;
 
-	private static final String NOME = "Matheus";
+	private static final String NAME = "Matheus";
 	
 	private static final String EMAIL = "matheus@mail.com";
 	
@@ -66,7 +70,7 @@ class UserServiceImplTest {
 		//Classe esperada/Classe atual
 		Assertions.assertEquals(User.class, response.getClass());
 		Assertions.assertEquals(ID, response.getId());
-		Assertions.assertEquals(NOME, response.getName());
+		Assertions.assertEquals(NAME, response.getName());
 		Assertions.assertEquals(EMAIL, response.getEmail());
 	}
 	
@@ -86,8 +90,19 @@ class UserServiceImplTest {
 	}
 
 	@Test
-	void testFindAll() {
-		fail("Not yet implemented");
+	void whenFindAllReturnAnListOfUsers() {	
+		Mockito.when(repository.findAll()).thenReturn(List.of(user));
+		
+		List<User> response = service.findAll();
+		
+		Assertions.assertNotNull(response);
+		Assertions.assertEquals(1, response.size());
+		Assertions.assertEquals(User.class, response.get(FIRST_INDEX).getClass());
+		Assertions.assertEquals(ID, response.get(FIRST_INDEX).getId());
+		Assertions.assertEquals(NAME, response.get(FIRST_INDEX).getName());
+		Assertions.assertEquals(EMAIL, response.get(FIRST_INDEX).getEmail());
+		Assertions.assertEquals(PASSWORD, response.get(FIRST_INDEX).getPassword());
+		
 	}
 
 	@Test
@@ -107,9 +122,9 @@ class UserServiceImplTest {
 	
 	//Inicia os valores das instâncias de usuário
 	private void startUser() {
-		user = new User(ID, NOME, EMAIL, PASSWORD);
-		userDTO = new UserDTO(ID, NOME, EMAIL, PASSWORD);
-		optionalUser = Optional.of(new User(ID, NOME, EMAIL, PASSWORD));
+		user = new User(ID, NAME, EMAIL, PASSWORD);
+		userDTO = new UserDTO(ID, NAME, EMAIL, PASSWORD);
+		optionalUser = Optional.of(new User(ID, NAME, EMAIL, PASSWORD));
 		
 	}
 
