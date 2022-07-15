@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.matheussilvadev.domain.User;
 import com.matheussilvadev.repositories.UserRepository;
 import com.matheussilvadev.resource.dto.UserDTO;
+import com.matheussilvadev.services.exceptions.DataIntegrityViolationException;
 import com.matheussilvadev.services.exceptions.ObjectNotFoundException;
 
 import net.bytebuddy.agent.VirtualMachine.ForHotSpot.Connection.Response;
@@ -116,6 +117,22 @@ class UserServiceImplTest {
 		Assertions.assertEquals(ID, response.getId());
 		Assertions.assertEquals(NAME, response.getName());
 		Assertions.assertEquals(EMAIL, response.getEmail());
+		
+	}
+	
+	@Test
+	void whenCreateThenReturnDataIntegrityViolationException() {
+		Mockito.when(repository.findByEmail(Mockito.anyString())).thenReturn(optionalUser);
+		
+		try {
+			//Ao colocar id 2 garanto que já exista um usuário com este email e que esse usuário não seja o usuário atual
+			optionalUser.get().setId(2);
+			User response = service.create(userDTO);
+		} catch (Exception ex) {
+			Assertions.assertEquals(DataIntegrityViolationException.class, ex.getClass());
+			Assertions.assertEquals("E-mail já cadastrado no sistema", ex.getMessage());
+			
+		}
 		
 	}
 
