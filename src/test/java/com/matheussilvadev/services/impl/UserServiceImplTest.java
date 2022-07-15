@@ -1,6 +1,7 @@
 package com.matheussilvadev.services.impl;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mockitoSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,8 +167,14 @@ class UserServiceImplTest {
 	}
 
 	@Test
-	void testDelete() {
-		fail("Not yet implemented");
+	void whenDeleteWithSuccess() {
+		Mockito.when(repository.findById(Mockito.anyInt())).thenReturn(optionalUser);
+		Mockito.doNothing().when(repository).deleteById(Mockito.anyInt());
+		
+		service.delete(ID);
+		
+		Mockito.verify(repository, Mockito.times(1)).deleteById(Mockito.anyInt());
+		
 	}
 	
 	//Inicia os valores das instâncias de usuário
