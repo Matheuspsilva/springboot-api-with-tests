@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.matheussilvadev.domain.User;
 import com.matheussilvadev.repositories.UserRepository;
 import com.matheussilvadev.resource.dto.UserDTO;
+import com.matheussilvadev.services.exceptions.ObjectNotFoundException;
 
 import net.bytebuddy.agent.VirtualMachine.ForHotSpot.Connection.Response;
 
@@ -67,6 +68,21 @@ class UserServiceImplTest {
 		Assertions.assertEquals(ID, response.getId());
 		Assertions.assertEquals(NOME, response.getName());
 		Assertions.assertEquals(EMAIL, response.getEmail());
+	}
+	
+	@Test
+	void whenFindByIdThenReturnAnObjectNotFoundException() {
+		//Mock da resposta do repository.findById utilizando no UserServiceImpl
+		//Quando o método for chamado retorna ObjectNotFoundException
+		Mockito.when(repository.findById(Mockito.anyInt())).thenThrow(new ObjectNotFoundException("Objeto não encontrado"));
+		
+		try {
+			service.findById(ID);
+		}catch (Exception ex) {
+			Assertions.assertEquals(ObjectNotFoundException.class, ex.getClass());
+			Assertions.assertEquals("Objeto não encontrado", ex.getMessage());
+		}
+		
 	}
 
 	@Test
