@@ -137,8 +137,32 @@ class UserServiceImplTest {
 	}
 
 	@Test
-	void testUpdate() {
-		fail("Not yet implemented");
+	void whenUpdateThenReturnSuccess() {
+		Mockito.when(repository.save(Mockito.any())).thenReturn(user);
+		
+		User response = service.update(userDTO);
+		
+		Assertions.assertNotNull(response);
+		Assertions.assertEquals(User.class, response.getClass());
+		Assertions.assertEquals(ID, response.getId());
+		Assertions.assertEquals(NAME, response.getName());
+		Assertions.assertEquals(EMAIL, response.getEmail());
+		
+	}
+	
+	@Test
+	void whenUpdateThenReturnDataIntegrityViolationException() {
+		Mockito.when(repository.findByEmail(Mockito.anyString())).thenReturn(optionalUser);
+		
+		try {
+			optionalUser.get().setId(2);
+			User response = service.update(userDTO);
+		} catch (Exception ex) {
+			Assertions.assertEquals(DataIntegrityViolationException.class, ex.getClass());
+			Assertions.assertEquals("E-mail já cadastrado no sistema", ex.getMessage());
+			
+		}
+		
 	}
 
 	@Test
