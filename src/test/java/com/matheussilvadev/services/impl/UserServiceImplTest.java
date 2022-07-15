@@ -28,6 +28,10 @@ import net.bytebuddy.agent.VirtualMachine.ForHotSpot.Connection.Response;
 @SpringBootTest
 class UserServiceImplTest {
 	
+	private static final String E_MAIL_JA_CADASTRADO = "E-mail já cadastrado no sistema";
+
+	private static final String OBJETO_NAO_ENCONTRADO = "Objeto não encontrado";
+
 	private static final int FIRST_INDEX = 0;
 
 	private static final Integer ID = 1;
@@ -80,13 +84,13 @@ class UserServiceImplTest {
 	void whenFindByIdThenReturnAnObjectNotFoundException() {
 		//Mock da resposta do repository.findById utilizando no UserServiceImpl
 		//Quando o método for chamado retorna ObjectNotFoundException
-		Mockito.when(repository.findById(Mockito.anyInt())).thenThrow(new ObjectNotFoundException("Objeto não encontrado"));
+		Mockito.when(repository.findById(Mockito.anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
 		
 		try {
 			service.findById(ID);
 		}catch (Exception ex) {
 			Assertions.assertEquals(ObjectNotFoundException.class, ex.getClass());
-			Assertions.assertEquals("Objeto não encontrado", ex.getMessage());
+			Assertions.assertEquals(OBJETO_NAO_ENCONTRADO, ex.getMessage());
 		}
 		
 	}
@@ -131,7 +135,7 @@ class UserServiceImplTest {
 			User response = service.create(userDTO);
 		} catch (Exception ex) {
 			Assertions.assertEquals(DataIntegrityViolationException.class, ex.getClass());
-			Assertions.assertEquals("E-mail já cadastrado no sistema", ex.getMessage());
+			Assertions.assertEquals(E_MAIL_JA_CADASTRADO, ex.getMessage());
 			
 		}
 		
@@ -160,7 +164,7 @@ class UserServiceImplTest {
 			User response = service.update(userDTO);
 		} catch (Exception ex) {
 			Assertions.assertEquals(DataIntegrityViolationException.class, ex.getClass());
-			Assertions.assertEquals("E-mail já cadastrado no sistema", ex.getMessage());
+			Assertions.assertEquals(E_MAIL_JA_CADASTRADO, ex.getMessage());
 			
 		}
 		
@@ -174,6 +178,18 @@ class UserServiceImplTest {
 		service.delete(ID);
 		
 		Mockito.verify(repository, Mockito.times(1)).deleteById(Mockito.anyInt());
+		
+	}
+	
+	@Test
+	void whenDeleteWithObjectNotFoundException() {
+		Mockito.when(repository.findById(Mockito.anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
+		try {
+			service.delete(ID);
+		} catch (Exception ex) {
+			Assertions.assertEquals(ObjectNotFoundException.class, ex.getClass());
+			Assertions.assertEquals(OBJETO_NAO_ENCONTRADO, ex.getMessage());
+		}
 		
 	}
 	
