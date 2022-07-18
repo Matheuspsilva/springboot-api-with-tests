@@ -120,8 +120,27 @@ class UserResourceTest {
 	}
 
 	@Test
-	void testUpdate() {
-		fail("Not yet implemented");
+	void whenUpdateThenReturnSuccess() {
+		Mockito.when(service.update(Mockito.any())).thenReturn(user);
+		Mockito.when(mapper.map(Mockito.any(), Mockito.any())).thenReturn(userDTO);
+		
+		ResponseEntity<UserDTO> response = resource.update(ID, userDTO);
+		
+		//Assegurar que a resposta não é nula
+		Assertions.assertNotNull(response);
+		//Assegurar que o corpo da resposta não é nulo
+		Assertions.assertNotNull(response.getBody());
+		//Assegurar que o tipo da resposta = ResponseEntity
+		Assertions.assertEquals(ResponseEntity.class, response.getClass());
+		//Assegurar que o status da resposta seja OK
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+		//Assegurar que o objeto que está dentro do corpo da resposta seja do tipo UserDTO
+		Assertions.assertEquals(UserDTO.class, response.getBody().getClass());
+		//Assegura que os dados do objeto sejam iguais aos dados passados como parâmetro
+		Assertions.assertEquals(ID, response.getBody().getId());
+		Assertions.assertEquals(NAME, response.getBody().getName());
+		Assertions.assertEquals(EMAIL, response.getBody().getEmail());
+		
 	}
 
 	@Test
