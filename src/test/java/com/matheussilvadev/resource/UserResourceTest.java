@@ -2,6 +2,8 @@ package com.matheussilvadev.resource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -13,6 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.matheussilvadev.domain.User;
@@ -75,8 +78,30 @@ class UserResourceTest {
 	}
 
 	@Test
-	void testFindAll() {
-		fail("Not yet implemented");
+	void whenFindAllReturnAListOfUserDTO() {
+		Mockito.when(service.findAll()).thenReturn(List.of(user));
+		Mockito.when(mapper.map(Mockito.any(), Mockito.any())).thenReturn(userDTO);
+		
+		ResponseEntity<List<UserDTO>> response = resource.findAll();
+		
+		//Assegurar que a resposta não é nula
+		Assertions.assertNotNull(response);
+		//Assegurar que o corpo da resposta não é nulo
+		Assertions.assertNotNull(response.getBody());
+		//Assegurar que o status da resposta seja OK
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+		//Assegurar que o tipo da resposta = ResponseEntity
+		Assertions.assertEquals(ResponseEntity.class, response.getClass());
+		//Assegurar que o corpo da resposta possui um ArrayList
+		Assertions.assertEquals(ArrayList.class, response.getBody().getClass());
+		//Assegurar que o objeto que está dentro do ArrayList seja do tipo UserDTO
+		Assertions.assertEquals(UserDTO.class, response.getBody().get(FIRST_INDEX).getClass());
+		//Assegura que os dados do objeto sejam iguais aos dados passados como parâmetro
+		Assertions.assertEquals(ID, response.getBody().get(FIRST_INDEX).getId());
+		Assertions.assertEquals(NAME, response.getBody().get(FIRST_INDEX).getName());
+		Assertions.assertEquals(EMAIL, response.getBody().get(FIRST_INDEX).getEmail());
+		Assertions.assertEquals(PASSWORD, response.getBody().get(FIRST_INDEX).getPassword());
+
 	}
 
 	@Test
