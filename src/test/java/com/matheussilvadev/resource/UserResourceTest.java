@@ -105,8 +105,18 @@ class UserResourceTest {
 	}
 
 	@Test
-	void testCreate() {
-		fail("Not yet implemented");
+	void whenCreateReturnCreated() {
+		Mockito.when(service.create(Mockito.any())).thenReturn(user);
+		
+		ResponseEntity<UserDTO> response = resource.create(userDTO);
+		
+		Assertions.assertNotNull(response);
+		Assertions.assertEquals(ResponseEntity.class, response.getClass());
+		//Assegurar que o status da resposta seja CREATED
+		Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		//Assegurar que o cabeçalho da resposta tenha a chave location
+		Assertions.assertNotNull(response.getHeaders().LOCATION);
+
 	}
 
 	@Test
