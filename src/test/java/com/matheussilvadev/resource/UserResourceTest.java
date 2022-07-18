@@ -144,8 +144,20 @@ class UserResourceTest {
 	}
 
 	@Test
-	void testDelete() {
-		fail("Not yet implemented");
+	void whenDeleteThenReturnSuccess() {
+		Mockito.doNothing().when(service).delete(Mockito.anyInt());
+		
+		ResponseEntity<UserDTO> response = resource.delete(ID);
+		
+		//Assegurar que a resposta não é nula
+		Assertions.assertNotNull(response);
+		//Assegurar que o tipo da resposta = ResponseEntity
+		Assertions.assertEquals(ResponseEntity.class, response.getClass());
+		//Assegurar que o status da resposta seja NO_CONTENT
+		Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+		//Verificar quantas vezes service delete foi executado
+		Mockito.verify(service, Mockito.times(1)).delete(Mockito.anyInt());
+
 	}
 	
 	//Inicia os valores das instâncias de usuário
