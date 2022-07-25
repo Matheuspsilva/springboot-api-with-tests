@@ -40,8 +40,8 @@ class UserResourceTest {
 	
 	private static final String PASSWORD = "1234";
 	
-	private User user;
-	private UserDTO userDTO;
+	private User user = new User();
+	private UserDTO userDTO = new UserDTO();
 	private Optional<User> optionalUser;
 	
 	@InjectMocks
